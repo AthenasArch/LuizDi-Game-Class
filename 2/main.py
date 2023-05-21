@@ -1,9 +1,30 @@
-#   *************************************************************
-#
-# atualizado por leonardo hilgemberg lopes.
-# Empresa: AthenasArch.
-#
-# adicionar movimento do personagem
+"""
+------------------------------------------------------------------------------------------
+AthenasArch.com
+Nome do Jogo: <Luiz-Di Game>
+Versão: 2.0
+Data de Criação: 21/05/2023
+Desenvolvedor: Leonardo Hilgemberg Lopes
+Descrição: Jogo de plataforma, com personagem, plataformas, audios e gritaria.
+
+Este script foi criado como parte de uma aula de programação em Python.
+
+Baseado no tutorial: https://coderslegacy.com/python/pygame-platformer-game-development/
+
+Aulas:
+
+1.0 - Criando a janela, plataforma e o personagem.
+2.0 - Movimento lateral e gravidade horizontal.
+6.0 - Adicionando Game Over do jogo se sair para fora da tela
+6.1 - Sistema de pontuacao.
+6.2 - Criando uma classe para gerenciar as operacoes da main
+      E organizar o script
+6.3 - Plataforma movel
+
+7.0 - Movimento do jogador e da plataforma
+------------------------------------------------------------------------------------------
+"""
+
 import pygame
 from pygame.locals import *
 import sys
