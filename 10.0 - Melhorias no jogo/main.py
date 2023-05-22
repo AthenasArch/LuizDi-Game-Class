@@ -70,7 +70,7 @@ RGB_COLOR_WHITE = (255, 255, 255)
 #constantes do projto:
 SCREEN_HEIGHT = 450
 SCREEN_WIDTH = 400
-SCREEN_TITLE = "LUIZ-DI GAME V1"
+SCREEN_TITLE = "LUIZ-DI GAME V2"
 
 # Contantes de jogabilidade e gravidade
 FPS = 60 # Frequencia de atualizacao, frames por segundo
