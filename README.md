@@ -18,8 +18,7 @@ Este script foi criado como parte de uma aula de programação em Python.
 
 Baseado no tutorial: https://coderslegacy.com/python/pygame-platformer-game-development/
 
-Aulas:
-
+# CONTEUDO:
     1.0 - Criando a janela, plataforma e o personagem.
     2.0 - Movimento lateral e gravidade horizontal.
     3.0 - Pulo livre do personagem.
@@ -39,3 +38,6 @@ Aulas:
             E organizar o script.
     6.3 - Plataforma movel.
     7.0 - Personagem agora vai se movimentar junto com a plataforma.
+    7.1 - Adicionando Coins (Moedas ao jogo), forma de melhorar a pontuacao
+    7.2 - Adicionando as imagens de fundo, do personagem e da plataforma
+    8.0 - Adicionando audios no jogo.

@@ -32,8 +32,11 @@ Aulas:
             E organizar o script.
     6.3 - Plataforma movel.
     7.0 - Personagem agora vai se movimentar junto com a plataforma.
+    7.1 - Adicionando Coins (Moedas ao jogo), forma de melhorar a pontuacao
+    7.2 - Adicionando as imagens de fundo, do personagem e da plataforma
 ------------------------------------------------------------------------------------------
 """
+
 from pyclbr import Class
 import pygame
 from pygame.locals import *
@@ -88,7 +91,9 @@ class Player(pygame.sprite.Sprite):
 
         # inicializa o personagem
         self.surf = pygame.Surface((self.size))
-        self.surf.fill(self.color)
+        # self.surf.fill(self.color)
+        self.surf = pygame.image.load("assets\images\Luiz\luiz.png")
+        # self.rect = self.surf.get_rect()
         self.rect = self.surf.get_rect(center = (self.iniPosition))
  
         # aqui e referente ao movimento do personagem
@@ -108,6 +113,7 @@ class Player(pygame.sprite.Sprite):
         #   se você deseja que o sprite seja excluído ou não após uma colisão. 
         #   (Mantenha este falso para a maioria dos casos).
         #
+    
         hits = pygame.sprite.spritecollide(self ,platforms, False)
         if self.vel.y > 0:        
             if hits:
@@ -118,7 +124,6 @@ class Player(pygame.sprite.Sprite):
                     self.pos.y = hits[0].rect.top +1
                     self.vel.y = 0
                     self.jumping = False
-
 
     def jump(self, platforms):
         # isso aqui, faz com que o personagem so pule quando estiver em contato com o chao
@@ -133,7 +138,7 @@ class Player(pygame.sprite.Sprite):
             if self.vel.y < -3:
                 self.vel.y = -3
 
-    def move(self, screenLimit = False):
+    def move(self, screenLimit):
         # Inicializa a aceleração como um vetor nulo
         ACC_X = 0 # Aceleracao horizontal em X
         ACC_Y = 0.5 # Aceleracao Vertical em Y, isso foi criado para esse jogo
@@ -180,18 +185,29 @@ class Player(pygame.sprite.Sprite):
 
 # classe das plataformas
 class Platform(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, width = 0, height = 18):
         super().__init__()
         self.moving = True
         self.point = True # Trata a pontuacao
+        self.speed = random.randint(-1, 1) # velocidade do movimento das plataformas
+        # -1, 0 e 1 calcula um percentual de 33% da plataforma se mover para direita
+        # esquerda ou nao se mover.
+        
         # caracteristicas do personagem:
-        self.size = (random.randint(50,100), 12) # pega a largura total da tela no comprimento e passa 10px na altura. 
-        self.color = RGB_COLOR_RED
-        self.iniPosition = (random.randint(0, SCREEN_WIDTH-10), random.randint(0, SCREEN_HEIGHT-30))
+        # self.size = (random.randint(50,100), 12) # pega a largura total da tela no comprimento e passa 10px na altura. 
+        # self.color = RGB_COLOR_RED
+        # self.iniPosition = (random.randint(0, SCREEN_WIDTH-10), random.randint(0, SCREEN_HEIGHT-30))
 
-        self.surf = pygame.Surface(self.size)
-        self.surf.fill(self.color)
-        self.rect = self.surf.get_rect(center = self.iniPosition) # definimos um retangulo e setamos os pontos apartir do centro dele
+        # geramos um comprimento ramdomico
+        if width == 0: 
+            width = random.randint(50, 120)
+
+        # self.surf = pygame.Surface(self.size)
+        # self.surf.fill(self.color)
+        self.image = pygame.image.load("assets/images/icons/platform.png")
+        self.surf = pygame.transform.scale(self.image, (width, height))
+        self.rect = self.surf.get_rect(center = (random.randint(0,SCREEN_WIDTH-10),
+                                                 random.randint(0, SCREEN_HEIGHT-30)))
 
     def check(self, platform, groupies):
         if pygame.sprite.spritecollideany(platform,groupies):
@@ -222,20 +238,72 @@ class Platform(pygame.sprite.Sprite):
     
     #         platforms.add(p)
     #         all_sprites.add(p)
-    def plat_gen(self, platforms, all_sprites):
+    def plat_gen(self, platforms, all_sprites, coins):
         while len(platforms) < 7 :
             # aqui geramos uma plataforma aleatoria dentro desse comprimento.
             width = random.randrange(50,100)
             p  = Platform()             
             # adiciona essas novas plataformas geradas dentro da tela
             p.rect.center = (random.randrange(0, SCREEN_WIDTH - width), random.randrange(-50, 0))
+            p.generateCoin(coins)
             platforms.add(p)
             all_sprites.add(p)
 
+    # tratamos o movimento do jogo de duas formas:
+    #   1 - quando a tela tem limite, ai os blocos voltam 
+    #   2 - quano a tela nao tem limite e os blocos saem do outro lado
+    def move(self, screenLimit, P1):
+        hits = self.rect.colliderect(P1.rect)
+        if screenLimit == False:
+            if self.moving == True:  
+                
+                self.rect.move_ip(self.speed, 0)
 
-    # vamos adicionar movimento as plataformas
-    def mov(self):
-        pass
+                # aqui adicionamos movimento do personagem
+                if hits:
+                    P1.pos += (self.speed, 0)
+
+                if self.speed > 0 and self.rect.left > SCREEN_WIDTH:
+                    self.rect.right = 0
+
+                if self.speed < 0 and self.rect.right < 0:
+                    self.rect.left = SCREEN_WIDTH
+        else:
+            if self.moving == True:
+                self.rect.move_ip(self.speed, 0)
+
+                # aqui adicionamos movimento do personagem
+                if hits:
+                    P1.pos += (self.speed, 0)
+
+                # Se a plataforma estiver movendo para a direita e atingir a borda direita
+                if self.speed > 0 and self.rect.right > SCREEN_WIDTH:
+                    # Inverter a direção da velocidade
+                    self.speed = -self.speed
+
+                # Se a plataforma estiver movendo para a esquerda e atingir a borda esquerda
+                if self.speed < 0 and self.rect.left < 0:
+                    # Inverter a direção da velocidade
+                    self.speed = -self.speed
+
+    def generateCoin(self, coins):
+        # Gera uma moeda se a plataforma não estiver se movendo
+        if self.speed == 0:
+            coins.add(Coin((self.rect.centerx, self.rect.centery - 50)))
+
+class Coin(pygame.sprite.Sprite):
+    def __init__(self, pos):
+        super().__init__()
+
+        self.image = pygame.image.load("assets/images/icons/Coin.png")
+        self.rect = self.image.get_rect()
+
+        self.rect.topleft = pos
+
+    def update(self, P1):
+        if self.rect.colliderect(P1.rect):
+            P1.score += 5
+            self.kill()
 
 class Game():
     def __init__(self) -> None:
@@ -293,19 +361,20 @@ class Game():
 
 # Função principal do jogo
 def main():
-    backgroundColor = RGB_COLOR_BLACK
 
+    # backgroundColor = RGB_COLOR_BLACK
+    background = pygame.image.load("assets/images/background/background.png") 
+    screenLimit = True # aqui voce escolhe se limita a tela nas laterais ou nao
     game = Game()
 
     # Cria uma instância da classe Player e atribui à variável P1
     P1 = Player()
 
     # Cria uma instância da classe Platform e atribui à variável PT1
-    PT1 = Platform()
-    PT1.surf = pygame.Surface((SCREEN_WIDTH, 20))
-    PT1.surf.fill(RGB_COLOR_CYAN)
+    # Ajusta a estética da plataforma inferior (Plataforma maior)
+    PT1 = Platform(SCREEN_WIDTH+60, 50)
     PT1.rect = PT1.surf.get_rect(center = (SCREEN_WIDTH/2, SCREEN_HEIGHT - 10))
-    PT1.moving = False
+    PT1.moving = False # Garante que a plataforma grande inicial nao tente se mover
     PT1.point = False
 
     platforms = pygame.sprite.Group()
@@ -314,9 +383,12 @@ def main():
     # Cria um grupo de sprites (objetos do jogo) 
     all_sprites = pygame.sprite.Group()
 
+    coins = pygame.sprite.Group()
+
     # Adiciona a plataforma e o jogador ao grupo de sprites
     all_sprites.add(PT1)
     all_sprites.add(P1)
+
 
     for x in range(random.randint(5, 6)):
         pl = Platform()
@@ -330,15 +402,26 @@ def main():
             game.quit(event)
             game.interface(event, P1, platforms)
 
-        # Preenche a tela de jogo com preto
-        displaysurface.fill(backgroundColor)
-    
         game.score(P1)
+
+
+        # Preenche a tela de jogo com preto
+        # displaysurface.fill(backgroundColor)
+        # TRATA A IMAGEM DE FUNDO
+        displaysurface.blit(background, (0, 0))   # <------------------
+        f = pygame.font.SysFont("Verdana", 20)     
+        g  = f.render(str(P1.score), True, (123,255,0))   
+        displaysurface.blit(g, (SCREEN_WIDTH/2, 10)) 
 
         # Loop que percorre todos os sprites
         for entity in all_sprites:
             # Desenha cada sprite na tela de jogo nas posições definidas por seus retângulos
             displaysurface.blit(entity.surf, entity.rect)
+
+        # Desenha as moedas
+        for coin in coins:
+            displaysurface.blit(coin.image, coin.rect)
+            coin.update(P1)
 
         # Isso aqui trata a fisica das plataformas
         # 1 - elimina as plataformas quando elas estao abaixo da tela
@@ -350,10 +433,20 @@ def main():
                 plat.rect.y += abs(P1.vel.y)
                 if plat.rect.top >= SCREEN_HEIGHT:
                     plat.kill()
+            
+            # trata as coins
+            for coin in coins:
+                coin.rect.y += abs(P1.vel.y)
+                if coin.rect.top >= SCREEN_HEIGHT:
+                    coin.kill()
 
         P1.update(P1, platforms)
-        P1.move(True)
-        PT1.plat_gen(platforms, all_sprites)
+        P1.move(screenLimit)
+        PT1.plat_gen(platforms, all_sprites, coins)
+
+        # aqui faz as plataformas se moverem
+        for platform in platforms:
+            platform.move(screenLimit, P1)
 
         game.gameOver(P1, all_sprites)
 

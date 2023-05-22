@@ -1,15 +1,40 @@
-#   *************************************************************
-#
-# atualizado por leonardo hilgemberg lopes.
-# Empresa: AthenasArch.
-#
-# 6.0 - Adicionando Game Over do jogo se sair para fora da tela
-# 6.1 - Sistema de pontuacao.
-# 6.2 - Criando uma classe para gerenciar as operacoes da main
-#       E organizar o script
-# 6.3 - Plataforma movel
-#
-# 7.0 - Movimento do jogador e da plataforma
+"""
+------------------------------------------------------------------------------------------
+AthenasArch.com
+Nome do Jogo: <Luiz-Di Game>
+Versão: 2.0
+Data de Criação: 21/05/2023
+Desenvolvedor: Leonardo Hilgemberg Lopes
+Descrição: Jogo de plataforma, com personagem, plataformas, audios e gritaria.
+
+Este script foi criado como parte de uma aula de programação em Python.
+
+Baseado no tutorial: https://coderslegacy.com/python/pygame-platformer-game-development/
+
+Aulas:
+
+    1.0 - Criando a janela, plataforma e o personagem.
+    2.0 - Movimento lateral e gravidade horizontal.
+    3.0 - Pulo livre do personagem.
+    3.1 - Limitando a tela.
+    3.2 - Personagem so pula quando está em contato com a plataforma.
+    4.0 - Adicionando uma determinada quantidade de plataformas ao inicio do jogo.
+    4.1 - Ao subir uma determinada altura da tela, mantemos sempre uma quantidade 
+            de 5 ou 6 plataformas na tela, se for menor do que isso,
+            gera novas plataformas.
+    5.0 - Ajuste nas distancias entre plataformas pequenas geradas.
+    5.1 - Resolvido o problema de bug do pulo da plataforma, agora ele só 
+            fica na proxima plataforma, se o valor do personagem for maior 
+            so que a base perior da plataforma.
+    6.0 - Adicionando Game Over do jogo se sair para fora da tela
+    6.1 - Sistema de pontuacao.
+    6.2 - Criando uma classe para gerenciar as operacoes da main
+            E organizar o script.
+    6.3 - Plataforma movel.
+    7.0 - Personagem agora vai se movimentar junto com a plataforma.
+    7.1 - Adicionando Coins (Moedas ao jogo), forma de melhorar a pontuacao
+------------------------------------------------------------------------------------------
+"""
 
 from pyclbr import Class
 import pygame
@@ -203,13 +228,14 @@ class Platform(pygame.sprite.Sprite):
     
     #         platforms.add(p)
     #         all_sprites.add(p)
-    def plat_gen(self, platforms, all_sprites):
+    def plat_gen(self, platforms, all_sprites, coins):
         while len(platforms) < 7 :
             # aqui geramos uma plataforma aleatoria dentro desse comprimento.
             width = random.randrange(50,100)
             p  = Platform()             
             # adiciona essas novas plataformas geradas dentro da tela
             p.rect.center = (random.randrange(0, SCREEN_WIDTH - width), random.randrange(-50, 0))
+            p.generateCoin(coins)
             platforms.add(p)
             all_sprites.add(p)
 
@@ -249,6 +275,25 @@ class Platform(pygame.sprite.Sprite):
                 if self.speed < 0 and self.rect.left < 0:
                     # Inverter a direção da velocidade
                     self.speed = -self.speed
+
+    def generateCoin(self, coins):
+        # Gera uma moeda se a plataforma não estiver se movendo
+        if self.speed == 0:
+            coins.add(Coin((self.rect.centerx, self.rect.centery - 50)))
+
+class Coin(pygame.sprite.Sprite):
+    def __init__(self, pos):
+        super().__init__()
+
+        self.image = pygame.image.load("Coin.png")
+        self.rect = self.image.get_rect()
+
+        self.rect.topleft = pos
+
+    def update(self, P1):
+        if self.rect.colliderect(P1.rect):
+            P1.score += 5
+            self.kill()
 
 class Game():
     def __init__(self) -> None:
@@ -328,9 +373,12 @@ def main():
     # Cria um grupo de sprites (objetos do jogo) 
     all_sprites = pygame.sprite.Group()
 
+    coins = pygame.sprite.Group()
+
     # Adiciona a plataforma e o jogador ao grupo de sprites
     all_sprites.add(PT1)
     all_sprites.add(P1)
+
 
     for x in range(random.randint(5, 6)):
         pl = Platform()
@@ -354,6 +402,11 @@ def main():
             # Desenha cada sprite na tela de jogo nas posições definidas por seus retângulos
             displaysurface.blit(entity.surf, entity.rect)
 
+        # Desenha as moedas
+        for coin in coins:
+            displaysurface.blit(coin.image, coin.rect)
+            coin.update(P1)
+
         # Isso aqui trata a fisica das plataformas
         # 1 - elimina as plataformas quando elas estao abaixo da tela
         # 2 - se a altura do personagem for maior que 1/3 da tela, sobe a tela
@@ -364,10 +417,16 @@ def main():
                 plat.rect.y += abs(P1.vel.y)
                 if plat.rect.top >= SCREEN_HEIGHT:
                     plat.kill()
+            
+            # trata as coins
+            for coin in coins:
+                coin.rect.y += abs(P1.vel.y)
+                if coin.rect.top >= SCREEN_HEIGHT:
+                    coin.kill()
 
         P1.update(P1, platforms)
         P1.move(screenLimit)
-        PT1.plat_gen(platforms, all_sprites)
+        PT1.plat_gen(platforms, all_sprites, coins)
 
         # aqui faz as plataformas se moverem
         for platform in platforms:
