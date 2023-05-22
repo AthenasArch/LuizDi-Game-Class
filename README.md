@@ -6,6 +6,13 @@
 
 #
 
+<p align="center">
+  <img src="https://github.com/AthenasArch/LuizDi-Game-Class/blob/71e2644d568c4d7740da9e8139f3528e9bb8104d/Doc/Gif/LuizDi.gif" alt="LunarLander GIF" width="300" />
+</p>
+
+#
+
+
 # INFORMAÇÕES DE VERSÃO E CRIAÇÃO:
 - AthenasArch.com
 - Nome do Jogo: <Luiz-Di Game>
