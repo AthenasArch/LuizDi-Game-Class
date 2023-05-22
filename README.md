@@ -41,3 +41,10 @@ Baseado no tutorial: https://coderslegacy.com/python/pygame-platformer-game-deve
     7.1 - Adicionando Coins (Moedas ao jogo), forma de melhorar a pontuacao
     7.2 - Adicionando as imagens de fundo, do personagem e da plataforma
     8.0 - Adicionando audios no jogo.
+    9.0 - Efeito de neve.
+    9.1 - Melhorando o efeito de neve.
+    9.2 - Vamos adicionando neve conforme a pontuacao vai aumentando, 
+            mas só preencho com neve até um determinado limite.
+    10.0 - Melhorias no jogo:
+        A - Ajustando o game over.
+        B - Melhoria na distancia entre as plataformas.
