@@ -14,22 +14,15 @@ Baseado no tutorial: https://coderslegacy.com/python/pygame-platformer-game-deve
 Aulas:
 
 1.0 - Criando a janela, plataforma e o personagem.
-6.0 - Adicionando Game Over do jogo se sair para fora da tela
-6.1 - Sistema de pontuacao.
-6.2 - Criando uma classe para gerenciar as operacoes da main
-      E organizar o script
-6.3 - Plataforma movel
-
-7.0 - Movimento do jogador e da plataforma
 ------------------------------------------------------------------------------------------
 """
 
+# importa as bibliotecas
 import pygame
-from pygame.locals import *
+from pygame.locals import * # arquivos de definicoes
 import sys
- 
-pygame.init()
 
+# Tabela RGB de Cores
 RGB_COLOR_BLACK = (0, 0, 0)
 RGB_COLOR_RED = (255, 0, 0)
 RGB_COLOR_GREEN = (0, 255, 0)
@@ -40,15 +33,17 @@ RGB_COLOR_MAGENTA = (255, 0, 255)
 RGB_COLOR_YELLOW = (255, 255, 0)
 RGB_COLOR_GRAY = (128, 128, 128)
 
+pygame.init()
 
 #constantes do projto:
-SCREEN_HEIGHT = 450
-SCREEN_WIDTH = 400
+SCREEN_HEIGHT = 450 # Altura
+SCREEN_WIDTH = 400 # Largura
 SCREEN_TITLE = "LUIZ-DI GAME V1"
 
 # Contantes de jogabilidade e gravidade
 FPS = 60 # Frequencia de atualizacao, frames por segundo
- 
+
+
 FramePerSec = pygame.time.Clock()
  
 # instanciamos a tela de forma global:
