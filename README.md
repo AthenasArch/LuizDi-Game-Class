@@ -12,6 +12,18 @@
 
 #
 
+# palavras e conceitos comuns que você pode encontrar ao desenvolver jogos com Pygame:
+  - Surface: No Pygame, uma Surface é qualquer imagem carregada em memória ou qualquer imagem criada por código que será desenhada na tela.
+
+  - Rect: Uma classe para representar objetos retangulares. É usado para manipular áreas retangulares de imagens e para detectar colisões entre sprites (se os Rects de dois sprites se sobrepõem, eles estão colidindo).
+
+  - Blit: Esta é a operação de desenhar uma imagem (ou Surface) em outra imagem. Normalmente você desenha (ou "blit") seus sprites na tela.
+
+  - Event: Eventos são como o Pygame lida com entrada do usuário - como cliques de mouse, pressionamentos de teclas e outros.
+
+  - Tick: Um "tick" é uma única iteração do loop principal do jogo. A função pygame.time.Clock.tick(fps) pode ser usada para controlar a taxa de quadros do jogo.
+
+  - Group: No Pygame, um Group é uma coleção de sprites. Isso é útil para atualizar ou desenhar muitos sprites de uma vez, ou para detectar colisões entre grupos de sprites.
 
 # INFORMAÇÕES DE VERSÃO E CRIAÇÃO:
 - AthenasArch.com
